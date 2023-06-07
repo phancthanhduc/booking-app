@@ -7,6 +7,10 @@ export interface ContainerProps {
     children: React.ReactNode;
 }
 
+export interface ClientOnlyProps {
+    children: React.ReactNode;
+}
+
 export type SafeUser = Omit<
     User,
     "createdAt" | "updatedAt" | "emailVerified"
