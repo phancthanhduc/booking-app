@@ -1,8 +1,53 @@
+import { useSearchParams } from "next/navigation";
+import useSearchModal from "@/app/hooks/useSearchModal";
+import useCountries from "@/app/hooks/useCountries";
+import { differenceInCalendarDays } from "date-fns";
 import { BiSearch } from "react-icons/bi";
 
 const Search = () => {
+    const searchModal = useSearchModal();
+    const params = useSearchParams();
+    const { getByValue } = useCountries();
+
+    const locationValue = params?.get("locationValue");
+    const startDate = params?.get("startDate");
+    const endDate = params?.get("endDate");
+    const guestCount = params?.get("guestCount");
+
+    const locationLabel = () => {
+        if (locationValue) {
+            return getByValue(locationValue)?.label;
+        }
+
+        return "Anywhere";
+    };
+
+    const durationLabel = () => {
+        if (startDate && endDate) {
+            const start = new Date(startDate);
+            const end = new Date(endDate);
+            let diff = differenceInCalendarDays(end, start);
+
+            if (diff === 0) {
+                diff = 1;
+            }
+
+            return `${diff} Days`;
+        }
+        return "Any Week";
+    };
+
+    const guestLabel = () => {
+        if (guestCount) {
+            return `${guestCount} Guests`;
+        }
+
+        return "Add Guests";
+    };
+
     return (
         <div
+            onClick={searchModal.onOpen}
             className="
             border-[1px]
             w-full
@@ -29,7 +74,7 @@ const Search = () => {
                 px-6
                 "
                 >
-                    Anywhere
+                    {locationLabel()}
                 </div>
                 <div
                     className="
@@ -43,7 +88,7 @@ const Search = () => {
                 text-center
                 "
                 >
-                    Anyweek
+                    {durationLabel()}
                 </div>
                 <div
                     className="
@@ -63,7 +108,7 @@ const Search = () => {
                         sm:block
                     "
                     >
-                        Add Guests
+                        {guestLabel()}
                     </div>
                     <div
                         className="

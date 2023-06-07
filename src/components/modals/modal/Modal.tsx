@@ -1,11 +1,11 @@
 "use client";
-import { ModalProps } from "@/commons/typescripts";
 import { useState, useEffect } from "react";
+import { ModalProps } from "@/commons/typescripts";
 import { IoMdClose } from "react-icons/io";
 import Button from "@components/button";
 
 const Modal: React.FC<ModalProps> = ({
-    actionLable,
+    actionLabel,
     onClose,
     onSubmit,
     body,
@@ -15,6 +15,7 @@ const Modal: React.FC<ModalProps> = ({
     secondaryAction,
     secondaryActionLabel,
     title,
+    isScroll,
 }) => {
     const [showModal, setShowModal] = useState(isOpen);
     //Use effect to update showModal state
@@ -47,19 +48,19 @@ const Modal: React.FC<ModalProps> = ({
     }
     return (
         <div
-            className="
-            fixed
-            flex
-            justify-center
-            items-center
-            overflow-x-hidden
-            overflow-y-auto
-            inset-0
-            z-50
-            outline-none
-            focus:outline-none
-            bg-neutral-800/70
-    "
+            className={`
+                fixed
+                flex
+                justify-center
+                items-center
+                overflow-x-hidden
+                overflow-y-auto
+                inset-0
+                z-50
+                outline-none
+                focus:outline-none
+                bg-neutral-800/70
+                `}
         >
             <div
                 className="
@@ -88,8 +89,8 @@ const Modal: React.FC<ModalProps> = ({
                             flex
                             flex-col
                             h-full
-                            md:h-auto
-                            lg:h-auto
+                            lg:h-[90vh]
+                            md:h-[90vh]
                             w-full
                             translate
                             border-0
@@ -107,7 +108,7 @@ const Modal: React.FC<ModalProps> = ({
                                 flex
                                 items-center
                                 justify-center
-                                p-6
+                                p-5
                                 rounded-t
                                 relative
                                 border-b-[1px]
@@ -128,34 +129,50 @@ const Modal: React.FC<ModalProps> = ({
                             </button>
                             <div className="text-lg font-semibold">{title}</div>
                         </div>
-                        {/* Body */}
-                        <div className="relative p-6 flex-auto">{body}</div>
-                        {/* Footer */}
-                        <div className="flex flex-col gap-2 p-6">
-                            <div
-                                className="
+                        <div
+                            className={`
+                                h-full
+                                md:h-[90vh]
+                                lg:h-[90vh] 
+                                ${
+                                    isScroll
+                                        ? "overflow-y-auto"
+                                        : "overflow-y-hidden"
+                                }
+                        `}
+                        >
+                            {/* Body */}
+                            <div className="relative py-0 px-6 flex-auto">
+                                {body}
+                            </div>
+                            {/* Footer */}
+                            <div className="flex flex-col gap-1 p-6">
+                                <div
+                                    className="
                                 flex
                                 flex-row
                                 items-center
-                                gap-4 
+                                gap-2
                                 w-full
                             "
-                            >
-                                {secondaryAction && secondaryActionLabel && (
+                                >
+                                    {secondaryAction &&
+                                        secondaryActionLabel && (
+                                            <Button
+                                                disabled={disabled}
+                                                outline
+                                                label={secondaryActionLabel}
+                                                onClick={handleSecondaryAction}
+                                            />
+                                        )}
                                     <Button
                                         disabled={disabled}
-                                        outline
-                                        label={secondaryActionLabel}
-                                        onClick={handleSecondaryAction}
+                                        label={actionLabel}
+                                        onClick={handleSubmit}
                                     />
-                                )}
-                                <Button
-                                    disabled={disabled}
-                                    label={actionLable}
-                                    onClick={handleSubmit}
-                                />
+                                </div>
+                                {footer}
                             </div>
-                            {footer}
                         </div>
                     </div>
                 </div>

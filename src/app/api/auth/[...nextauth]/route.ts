@@ -1,17 +1,17 @@
-import NextAuth from "next-auth/next";
+import NextAuth from "next-auth";
 import type { NextAuthOptions } from "next-auth";
+import prisma from "@app/libs/prismadb";
+import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import GoogleProvider from "next-auth/providers/google";
 import GithubProvider from "next-auth/providers/github";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { custom } from "openid-client";
-import { PrismaAdapter } from "@next-auth/prisma-adapter";
-import prisma from "@app/libs/prismadb";
 import bcrypt from "bcrypt";
 
 custom.setHttpOptionsDefaults({
     timeout: 5000,
 });
-const options: NextAuthOptions = {
+export const authOptions: NextAuthOptions = {
     adapter: PrismaAdapter(prisma),
     session: {
         strategy: "jwt",
@@ -31,6 +31,13 @@ const options: NextAuthOptions = {
         GithubProvider({
             clientId: process.env.GITHUB_ID as string,
             clientSecret: process.env.GITHUB_SECRET as string,
+            authorization: {
+                params: {
+                    prompt: "consent",
+                    access_type: "offline",
+                    response_type: "code",
+                },
+            },
         }),
         CredentialsProvider({
             name: "credentials",
@@ -68,8 +75,7 @@ const options: NextAuthOptions = {
     pages: {
         signIn: "/",
     },
-    debug: process.env.NODE_ENV === "development",
 };
 
-const handler = NextAuth(options);
+const handler = NextAuth(authOptions);
 export { handler as GET, handler as POST };
